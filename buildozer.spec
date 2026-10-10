@@ -7,8 +7,7 @@ source.dir = .
 source.include_exts = py,png,jpg,jpeg,kv,atlas,json,txt,html,js,css,woff,ttf,md,gif,webp
 version = 75.0
 
-# Start lighter: flask core first. numpy/pandas are heavy and often break CI.
-# After a successful base APK we can add them back.
+# Lighter requirements first (flask core). numpy/pandas can be added later after base APK works.
 requirements = python3,flask,requests,urllib3,jinja2,werkzeug,markupsafe,itsdangerous,click,blinker,certifi,charset-normalizer,idna,six,setuptools
 
 orientation = portrait
@@ -23,13 +22,9 @@ android.archs = arm64-v8a
 android.allow_backup = True
 android.presplash_color = #050816
 
-# CRITICAL: webview bootstrap for Flask apps
-# (without this, buildozer defaults to sdl2 which is wrong)
+# CRITICAL for Flask: use WebView bootstrap (not sdl2)
+android.bootstrap = webview
 p4a.branch = master
-
-# Force webview via requirements token used by some p4a versions
-# Also set explicitly if supported:
-# android.bootstrap = webview
 
 [buildozer]
 log_level = 2
