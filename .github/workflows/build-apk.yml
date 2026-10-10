@@ -1,45 +1,65 @@
 name: Build TITAN Pro APK
 
 on:
-  workflow_dispatch:          # Manual trigger
+  workflow_dispatch:
   push:
     branches: [ main ]
 
 jobs:
   build:
     name: Build Android APK
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 180
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check if main TITAN file exists
+      - name: Check TITAN file
         run: |
           if [ ! -f "TITAN_PRO_V75_PWA.py" ]; then
             echo "ERROR: TITAN_PRO_V75_PWA.py not found!"
-            echo "Please upload the original large Python file to the root of the repository."
             exit 1
           fi
-          echo "TITAN_PRO_V75_PWA.py found. Size: $(du -h TITAN_PRO_V75_PWA.py | cut -f1)"
+          echo "Found TITAN_PRO_V75_PWA.py ($(du -h TITAN_PRO_V75_PWA.py | cut -f1))"
 
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          command: buildozer -v android debug
-          workdir: .
-          buildozer_version: stable
+          python-version: '3.11'
 
-      - name: List built files
+      - name: Install system dependencies
         run: |
-          echo "=== Contents of bin/ ==="
+          sudo apt-get update
+          sudo apt-get install -y \
+            git zip unzip openjdk-17-jdk python3-pip python3-venv \
+            autoconf libtool pkg-config zlib1g-dev \
+            libncurses5-dev libncursesw5-dev libtinfo5 \
+            cmake libffi-dev libssl-dev \
+            libltdl-dev
+
+      - name: Install Buildozer and Cython
+        run: |
+          pip install --upgrade pip
+          pip install "cython<3.0"
+          pip install buildozer
+
+      - name: Build APK with Buildozer
+        run: |
+          buildozer -v android debug
+        env:
+          BUILDOZER_WARN_ON_ROOT: 0
+
+      - name: Show built files
+        if: always()
+        run: |
+          echo "=== bin/ contents ==="
           ls -lah bin/ || true
           find . -name "*.apk" -o -name "*.aab" | head -20
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
+        if: success()
         with:
           name: TITAN-Pro-APK
           path: |
