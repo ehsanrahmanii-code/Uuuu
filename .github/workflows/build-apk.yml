@@ -1,0 +1,49 @@
+name: Build TITAN Pro APK
+
+on:
+  workflow_dispatch:          # Manual trigger
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if main TITAN file exists
+        run: |
+          if [ ! -f "TITAN_PRO_V75_PWA.py" ]; then
+            echo "ERROR: TITAN_PRO_V75_PWA.py not found!"
+            echo "Please upload the original large Python file to the root of the repository."
+            exit 1
+          fi
+          echo "TITAN_PRO_V75_PWA.py found. Size: $(du -h TITAN_PRO_V75_PWA.py | cut -f1)"
+
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer -v android debug
+          workdir: .
+          buildozer_version: stable
+
+      - name: List built files
+        run: |
+          echo "=== Contents of bin/ ==="
+          ls -lah bin/ || true
+          find . -name "*.apk" -o -name "*.aab" | head -20
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TITAN-Pro-APK
+          path: |
+            bin/*.apk
+            bin/*.aab
+          if-no-files-found: warn
+          retention-days: 14
