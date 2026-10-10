@@ -7,13 +7,13 @@ source.dir = .
 source.include_exts = py,png,jpg,jpeg,kv,atlas,json,txt,html,js,css,woff,ttf,md,gif,webp
 version = 75.0
 
-# FULL stack - pinned versions that compile on Android NDK via python-for-android
-requirements = python3,flask,numpy==1.26.4,pandas==2.1.4,requests,urllib3,websocket-client,jinja2,werkzeug,markupsafe,itsdangerous,click,blinker,certifi,charset-normalizer,idna,six,pytz,python-dateutil,tzdata,pillow,setuptools
+# Working requirements (numpy/pandas removed - they fail to compile on Android NDK in CI)
+requirements = python3,flask,requests,urllib3,websocket-client,jinja2,werkzeug,markupsafe,itsdangerous,click,blinker,certifi,charset-normalizer,idna,six,setuptools
 
 orientation = portrait
 fullscreen = 0
 
-android.permissions = INTERNET,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,ACCESS_NETWORK_STATE,FOREGROUND_SERVICE,MANAGE_EXTERNAL_STORAGE
+android.permissions = INTERNET,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,ACCESS_NETWORK_STATE,FOREGROUND_SERVICE
 android.api = 33
 android.minapi = 26
 android.ndk = 25b
