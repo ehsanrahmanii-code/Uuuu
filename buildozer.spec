@@ -7,8 +7,8 @@ source.dir = .
 source.include_exts = py,png,jpg,jpeg,kv,atlas,json,txt,html,js,css,woff,ttf,md,gif,webp
 version = 75.0
 
-# FULL requirements - complete TITAN Pro
-requirements = python3,flask,numpy,pandas,requests,urllib3,websocket-client,jinja2,werkzeug,markupsafe,itsdangerous,click,blinker,certifi,charset-normalizer,idna,six,pytz,python-dateutil,tzdata,pillow,setuptools
+# FULL stack - pinned versions that compile on Android NDK via python-for-android
+requirements = python3,flask,numpy==1.26.4,pandas==2.1.4,requests,urllib3,websocket-client,jinja2,werkzeug,markupsafe,itsdangerous,click,blinker,certifi,charset-normalizer,idna,six,pytz,python-dateutil,tzdata,pillow,setuptools
 
 orientation = portrait
 fullscreen = 0
@@ -22,7 +22,6 @@ android.archs = arm64-v8a
 android.allow_backup = True
 android.presplash_color = #050816
 
-# CRITICAL for Flask: use WebView bootstrap
 android.bootstrap = webview
 p4a.branch = master
 
