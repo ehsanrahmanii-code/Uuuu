@@ -35,20 +35,30 @@ jobs:
             git zip unzip openjdk-17-jdk python3-pip python3-venv \
             autoconf libtool pkg-config zlib1g-dev \
             libncurses5-dev libncursesw5-dev libtinfo5 \
-            cmake libffi-dev libssl-dev \
-            libltdl-dev
+            cmake libffi-dev libssl-dev libltdl-dev \
+            gettext autopoint libgettextpo-dev \
+            build-essential ccache
 
       - name: Install Buildozer and Cython
         run: |
-          pip install --upgrade pip
-          pip install "cython<3.0"
+          pip install --upgrade pip setuptools wheel
+          pip install "cython==0.29.36"
           pip install buildozer
+
+      - name: Ensure webview bootstrap in buildozer.spec
+        run: |
+          if ! grep -q "android.bootstrap" buildozer.spec; then
+            sed -i '/\[app\]/a android.bootstrap = webview' buildozer.spec
+          fi
+          grep -E 'bootstrap|requirements|archs' buildozer.spec || true
 
       - name: Build APK with Buildozer
         run: |
+          # Clean previous failed state if any
+          rm -rf .buildozer/android/platform/build-arm64-v8a || true
           buildozer -v android debug
         env:
-          BUILDOZER_WARN_ON_ROOT: 0
+          BUILDOZER_WARN_ON_ROOT: "0"
 
       - name: Show built files
         if: always()
